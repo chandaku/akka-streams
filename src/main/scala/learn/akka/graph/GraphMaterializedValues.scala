@@ -1,10 +1,9 @@
-package learn
+package learn.akka.graph
 
 import akka.actor.ActorSystem
-import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Keep, RunnableGraph, Sink, Source, ZipWith}
-import akka.stream.{ActorMaterializer, ClosedShape, FanOutShape2, FlowShape, SinkShape, UniformFanInShape}
+import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Keep, Sink, Source}
+import akka.stream.{ActorMaterializer, FlowShape, SinkShape}
 
-import java.util.Date
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
@@ -88,7 +87,7 @@ object GraphMaterializedValues extends App {
 
   val simpleSource = Source(1 to 42)
 
-  val simpleFlow = Flow[Int].map(x=> x)
+  val simpleFlow = Flow[Int].map(x => x)
 
   val simpleSink = Sink.ignore
 

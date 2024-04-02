@@ -1,4 +1,4 @@
-package learn
+package learn.akka
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer

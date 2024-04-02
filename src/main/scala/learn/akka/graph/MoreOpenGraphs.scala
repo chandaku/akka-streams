@@ -1,8 +1,8 @@
-package learn
+package learn.akka.graph
 
 import akka.actor.ActorSystem
-import akka.stream.scaladsl.{Broadcast, Concat, Flow, GraphDSL, RunnableGraph, Sink, Source, ZipWith}
-import akka.stream.{ActorMaterializer, ClosedShape, FanOutShape2, SinkShape, SourceShape, UniformFanInShape}
+import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, RunnableGraph, Sink, Source, ZipWith}
+import akka.stream.{ActorMaterializer, ClosedShape, FanOutShape2, UniformFanInShape}
 
 import java.util.Date
 
@@ -22,9 +22,9 @@ object MoreOpenGraphs extends App {
       import GraphDSL.Implicits._
 
       //steps - define Aug SHAPES
-      val max1 = builder.add(ZipWith[Int, Int, Int]((a,b)=> Math.max(a, b)))
-      val max2 = builder.add(ZipWith[Int, Int, Int]((a,b)=> Math.max(a, b)))
-      val max3 = builder.add(ZipWith[Int, Int, Int]((a,b)=> Math.max(a, b)))
+      val max1 = builder.add(ZipWith[Int, Int, Int]((a, b) => Math.max(a, b)))
+      val max2 = builder.add(ZipWith[Int, Int, Int]((a, b) => Math.max(a, b)))
+      val max3 = builder.add(ZipWith[Int, Int, Int]((a, b) => Math.max(a, b)))
 
       max1.out ~> max3.in0
       max2.out ~> max3.in1
@@ -37,7 +37,7 @@ object MoreOpenGraphs extends App {
   val source3 = Source((1 to 10).reverse)
   val source4 = Source(1 to 10).map(_ => 7)
 
-  val maxSink = Sink.foreach[Int](x=> println(s"Max is $x"))
+  val maxSink = Sink.foreach[Int](x => println(s"Max is $x"))
 
   /* RunnableGraph.fromGraph(
     GraphDSL.create() {
@@ -73,7 +73,7 @@ object MoreOpenGraphs extends App {
   - output2: suspicious txns ids
   */
 
-  case class Transaction(id: String, source: String, recipient: String, amount:Int, date: Date)
+  case class Transaction(id: String, source: String, recipient: String, amount: Int, date: Date)
 
   val tansactionsSource = Source(List(
     Transaction("523423423", "Chandan", "Poonam", 100, new Date),
@@ -82,14 +82,14 @@ object MoreOpenGraphs extends App {
   ))
 
   val bankProcessor = Sink.foreach[Transaction](println)
-  val suspiciousAnalysisService = Sink.foreach[String](txnId=>println(s"Suspicious Txn Id $txnId"))
+  val suspiciousAnalysisService = Sink.foreach[String](txnId => println(s"Suspicious Txn Id $txnId"))
 
   val suspicouosTxnStaticGraph = GraphDSL.create() {
     implicit builder =>
       import GraphDSL.Implicits._
       //Step2
       val broadcast = builder.add(Broadcast[Transaction](2))
-      val suspiciousTransactionFltr = builder.add(Flow[Transaction].filter(txn=> txn.amount > 10000))
+      val suspiciousTransactionFltr = builder.add(Flow[Transaction].filter(txn => txn.amount > 10000))
       val txnIdExtractor = builder.add(Flow[Transaction].map[String](txn => txn.id))
       //step3
       broadcast.out(0) ~> suspiciousTransactionFltr ~> txnIdExtractor
@@ -108,7 +108,7 @@ object MoreOpenGraphs extends App {
         ClosedShape
     }
   )
-      suspiciousTransactionRunnableGraph.run()
+  suspiciousTransactionRunnableGraph.run()
 
 
 }

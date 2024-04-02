@@ -1,9 +1,9 @@
-package learn
+package learn.akka.graph
 
 import akka.NotUsed
 import akka.actor.ActorSystem
+import akka.stream.scaladsl.{Balance, Broadcast, Flow, GraphDSL, Merge, RunnableGraph, Sink, Source}
 import akka.stream.{ActorMaterializer, ClosedShape}
-import akka.stream.scaladsl.{Balance, Broadcast, Flow, GraphDSL, Merge, RunnableGraph, Sink, Source, Zip}
 
 object GraphBasics extends App {
 
@@ -12,9 +12,9 @@ object GraphBasics extends App {
 
   val input = Source(1 to 1000)
 
-  val incrementer = Flow[Int].map(x=>x+1)
+  val incrementer = Flow[Int].map(x => x + 1)
 
-  val multiplier= Flow[Int].map( x=> x*10)
+  val multiplier = Flow[Int].map(x => x * 10)
 
   val sink = Sink.foreach[(Int, Int)](println)
 
@@ -62,10 +62,10 @@ object GraphBasics extends App {
   val fastSource = input.throttle(5, 1 second)
   val slowSource = input.throttle(2, 1 second)
 
-/*  val balanceSink1 = Sink.foreach[Int](x=> println(s"Sink 1 ${x}"))
+  /*  val balanceSink1 = Sink.foreach[Int](x=> println(s"Sink 1 ${x}"))
   val balanceSink2 = Sink.foreach[Int](x=> println(s"Sink 2 ${x}"))*/
 
-  val balanceSink1 = Sink.fold[Int, Int](0)((count, element)=>{
+  val balanceSink1 = Sink.fold[Int, Int](0)((count, element) => {
     println(s"Sink 1 number of element count $count")
     count + 1
   })
@@ -83,7 +83,8 @@ object GraphBasics extends App {
       val balance = builder.add(Balance[Int](2))
 
       fastSource ~> merge ~> balance ~> balanceSink1
-      slowSource ~> merge;  balance ~> balanceSink2
+      slowSource ~> merge;
+      balance ~> balanceSink2
 
       ClosedShape
     }
