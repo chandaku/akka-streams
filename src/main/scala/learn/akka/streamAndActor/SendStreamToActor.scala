@@ -28,8 +28,13 @@ object SendStreamToActor extends App {
 
   implicit val timeout = Timeout(2 seconds)
   val sink = Sink.foreach[Int](println)
+  // actor as flow
   val actorBasedFlow = Flow[Int].ask[Int](parallelism = 4)(simpleActor)
+  numberSource.via(actorBasedFlow).to(Sink.foreach[Int](println)).run()
+  //Source(1 to 10).ask[Int](parallelism = 4)(simpleActor).to(sink).run()
 
-  //numberSource.via(actorBasedFlow).to(Sink.foreach[Int](println)).run()
-  Source(1 to 10).ask[Int](parallelism = 4)(simpleActor).to(sink).run()
+  // actor as Source
+
+ // Source.actorRef()
+
 }

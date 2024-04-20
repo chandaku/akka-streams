@@ -2,7 +2,7 @@ package learn.akka.graph
 
 import akka.NotUsed
 import akka.actor.ActorSystem
-import akka.stream.scaladsl.{Balance, Broadcast, Flow, GraphDSL, Merge, RunnableGraph, Sink, Source}
+import akka.stream.scaladsl.{Balance, Broadcast, Flow, GraphDSL, Merge, RunnableGraph, Sink, Source, Zip}
 import akka.stream.{ActorMaterializer, ClosedShape}
 
 object GraphBasics extends App {
@@ -19,7 +19,7 @@ object GraphBasics extends App {
   val sink = Sink.foreach[(Int, Int)](println)
 
   //step 1 setting up the fundamentals for the graph
-  /*val graph = RunnableGraph.fromGraph(
+  val graph = RunnableGraph.fromGraph(
     GraphDSL.create() { implicit builder: GraphDSL.Builder[NotUsed] =>  //builder mutable data structure
       import GraphDSL.Implicits._ // brings some nice operators into scope
       val broadcast = builder.add(Broadcast[Int](2))
@@ -32,11 +32,10 @@ object GraphBasics extends App {
 
       ClosedShape // Freeze the builder shape
 
-
     }
   )
 
-  graph.run()*/
+ // graph.run()
   val sink1 = Sink.foreach[Int](println)
   val sink2 = Sink.foreach[Int](println)
   val graphToMultipleSink = RunnableGraph.fromGraph(
@@ -44,9 +43,9 @@ object GraphBasics extends App {
       import GraphDSL.Implicits._ // brings some nice operators into scope
       val broadcast = builder.add(Broadcast[Int](2))
 
-      input ~> broadcast
-      broadcast ~> sink1
-      broadcast ~> sink1
+      input ~> broadcast ~> sink1
+               broadcast ~> sink2
+
       ClosedShape
     }
   )

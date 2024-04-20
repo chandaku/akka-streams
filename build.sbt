@@ -2,6 +2,8 @@ ThisBuild / version := "0.1.0-SNAPSHOT"
 
 ThisBuild / scalaVersion := "2.12.8"
 
+resolvers += "Akka library repository".at("https://repo.akka.io/maven")
+
 lazy val root = (project in file("."))
   .settings(
     name := "akka-streams"
